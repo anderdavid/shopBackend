@@ -1,0 +1,12 @@
+FROM maven:3.9.4-eclipse-temurin-17
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+vim \
+nano \
+git \
+iproute2 \
+unzip \
+bash
+
+CMD ["tail","-f","/dev/null"]

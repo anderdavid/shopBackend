@@ -1,0 +1,37 @@
+name: Deploy
+on:
+  push:
+    branches: [dev, main]
+
+jobs:
+  deploy-dev:
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to Dev
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.DEV_EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.DEV_EC2_SSH_KEY }}
+          script: |
+            cd /app
+            git pull origin dev
+            docker-compose -f docker-compose.dev.yml up -d --build
+
+  # deploy-prod:
+  #   if: github.ref == 'refs/heads/main'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Deploy to Production
+  #       uses: appleboy/ssh-action@v0.1.5
+  #       with:
+  #         host: ${{ secrets.PROD_EC2_HOST }}
+  #         username: ubuntu
+  #         key: ${{ secrets.PROD_EC2_SSH_KEY }}
+  #         script: |
+  #           cd /app
+  #           git pull origin main
+  #           docker-compose -f docker-compose.yml up -d --build

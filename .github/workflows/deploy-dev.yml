@@ -16,6 +16,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.DEV_EC2_SSH_KEY }}
           script: |
+            cd shopBackend
             git pull origin dev
             docker-compose -f docker-compose.dev.yml up -d --build
 

@@ -17,6 +17,7 @@ jobs:
           key: ${{ secrets.DEV_EC2_SSH_KEY }}
           script: |
             cd shopBackend
+            git checkout dev
             git pull origin dev
             docker-compose -f docker-compose.dev.yml up -d --build
 

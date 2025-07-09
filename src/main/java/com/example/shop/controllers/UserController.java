@@ -2,7 +2,6 @@ package com.example.shop.controllers;
 
 import com.example.shop.models.User;
 import com.example.shop.repositories.UserRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,9 +16,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<String> findAllUsers(){
-        //return repo.findAll();
-        return ResponseEntity.ok("Lista de usuarios obtenida correctamente.");
+    public List<User> findAllUsers(){
+        return repo.findAll();
     }
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id){

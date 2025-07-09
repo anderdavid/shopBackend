@@ -1,4 +1,5 @@
 version: "3.8"
+name: shop-local
 
 services:
   mysql:
@@ -10,12 +11,13 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data_local:/var/lib/mysql
   app:
     build:
       context: .
       dockerfile: Dockerfile.local
     container_name: shop_local_cont
+    image: shop-app:local
     depends_on:
       - mysql
     volumes:
@@ -24,4 +26,4 @@ services:
       - "8080:8080"
 
 volumes:
-  db_data:
+  db_data_local:

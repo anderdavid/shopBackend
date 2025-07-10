@@ -17,9 +17,9 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<String> findAllUsers() {
-        // return repo.findAll();
-        return ResponseEntity.ok("prueba de ci 4");
+    public List<User> findAllUsers() {
+        return repo.findAll();
+
     }
 
     @GetMapping("/{id}")

@@ -1,4 +1,6 @@
 package com.example.shop.models;
+
+
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -7,13 +9,13 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
-@Table(name ="users")
-public class User {
+@Table(name ="roles")
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
-    private String edad;
+    private String description;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -21,16 +23,13 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToMany(mappedBy = "users")
-    private Set<Role> role;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @ManyToMany
+    @JoinTable(
+            name="role_user",
+            joinColumns = @JoinColumn(name="role_id"),
+            inverseJoinColumns = @JoinColumn(name="user_id")
+    )
+    private Set<User> users;
 
     public String getNombre() {
         return nombre;
@@ -40,12 +39,12 @@ public class User {
         this.nombre = nombre;
     }
 
-    public String getEdad() {
-        return edad;
+    public String getDescription() {
+        return description;
     }
 
-    public void setEdad(String edad) {
-        this.edad = edad;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -64,11 +63,19 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public Set<Role> getRole() {
-        return role;
+    public Set<User> getUsers() {
+        return users;
     }
 
-    public void setRole(Set<Role> role) {
-        this.role = role;
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

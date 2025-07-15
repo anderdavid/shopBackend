@@ -12,8 +12,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nombre;
-    private String edad;
+    private String firstName;
+    private String LastName;
+    private String email;
+    private Long age;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -32,20 +34,36 @@ public class User {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getEdad() {
-        return edad;
+    public String getLastName() {
+        return LastName;
     }
 
-    public void setEdad(String edad) {
-        this.edad = edad;
+    public void setLastName(String lastName) {
+        LastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Long getAge() {
+        return age;
+    }
+
+    public void setAge(Long age) {
+        this.age = age;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -62,13 +80,5 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Set<Role> getRole() {
-        return role;
-    }
-
-    public void setRole(Set<Role> role) {
-        this.role = role;
     }
 }

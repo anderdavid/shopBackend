@@ -29,13 +29,28 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> findAllUsers() {
-        return repo.findAll();
+    public ResponseEntity<?> findAllUsers() {
+
+        List<User> users = repo.findAll();
+        Map<String,Object> response = new HashMap<>();
+        if(users.isEmpty()){
+            response.put(MESSAGE,"no se encontraron usuarios");
+            return ResponseEntity.badRequest().body(response);
+        }
+        return  ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
-        return repo.findById(id).orElse(null);
+    public ResponseEntity<?> getUser(@PathVariable Long id) {
+
+        User user = repo.findById(id).orElse(null);
+        Map<String,Object> response = new HashMap<>();
+        if(user == null){
+            response.put(MESSAGE,"Usuario no encontrado");
+            return ResponseEntity.badRequest().body(response);
+        }
+        response.put(USER,user);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
@@ -76,27 +91,63 @@ public class UserController {
         response.put(MESSAGE,"usuario creado");
         response.put(USER,newUser);
         return ResponseEntity.ok(response);
-        //return ResponseEntity.ok("validando...");
 
     }
 
     @PutMapping("/{id}")
-    public User updateUsuario(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<?> updateUsuario(@PathVariable Long id, @RequestBody @Valid UserDto mUser) {
         User existUser = repo.findById(id).orElse(null);
-        if (existUser != null) {
-            existUser.setFirstName(user.getFirstName());
-            existUser.setLastName(user.getLastName());
-            existUser.setEmail(user.getEmail());
-            existUser.setAge(user.getAge());
-            existUser.setUpdatedAt(LocalDateTime.now());
-            repo.save(existUser);
+        Map<String,Object> response = new HashMap<>();
+
+        if(existUser == null){
+            response.put(MESSAGE,"Usuario no encontrado");
+            return ResponseEntity.badRequest().body(response);
         }
-        return null;
+
+        User otherUser = repo.findByEmail(mUser.getEmail()).orElse(null);
+        if(otherUser !=null && otherUser.getId() != id){
+            response.put(MESSAGE,"email en uso, use un email diferente");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        List<String> roleNames = mUser.getRoles();
+        List<Role> mRoles = new ArrayList<>();
+        for(String roleName : roleNames){
+            Role mRole = roleRepository.findByName(roleName).orElse(null);
+
+            if(mRole ==null){
+                response.put(MESSAGE,"El rol "+roleName+" no existe");
+                return ResponseEntity.badRequest().body(response);
+            }
+            mRoles.add(mRole);
+        }
+
+            existUser.setFirstName(mUser.getFirstName());
+            existUser.setLastName(mUser.getLastName());
+            existUser.setAge(mUser.getAge());
+            existUser.setEmail(mUser.getEmail());
+            existUser.setPassword(mUser.getPassword());
+            existUser.setUpdatedAt(LocalDateTime.now());
+            mRoles.forEach(role->{
+                existUser.getRoles().add(role);
+            });
+            response.put(MESSAGE,"usuario actualizado");
+            response.put(USER,existUser);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?>  deleteUser(@PathVariable Long id) {
+        Map<String,Object> response = new HashMap<>();
+        User existUser = repo.findById(id).orElse(null);
+
+        if(existUser ==null){
+            response.put(MESSAGE,"Usuario no encontrado");
+            return ResponseEntity.badRequest().body(response);
+        }
         repo.deleteById(id);
+        response.put(MESSAGE,"El usuario '"+ existUser.getFirstName()+"' ha sido eliminado");
+        return ResponseEntity.ok(response);
     }
 
 }

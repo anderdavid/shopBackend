@@ -20,7 +20,6 @@ public class UserController {
     @GetMapping
     public List<User> findAllUsers() {
         return repo.findAll();
-
     }
 
     @GetMapping("/{id}")

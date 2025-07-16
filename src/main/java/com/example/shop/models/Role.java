@@ -4,6 +4,7 @@ package com.example.shop.models;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -14,7 +15,16 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
+    @NotNull(message = "El campo name es obligatorio")
+    @Size(min = 2, message = "El campo name debe tener al menos 2 caracteres")
+    @Column(unique = true,nullable = false)
     private String name;
+
+    @NotNull(message = "El description description es obligatorio")
+    @Size(min = 2, message = "El campo description debe tener al menos 2 caracteres")
+    @Column(nullable = false)
     private String description;
 
     @CreationTimestamp

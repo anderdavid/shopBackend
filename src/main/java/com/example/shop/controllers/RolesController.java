@@ -1,14 +1,16 @@
 package com.example.shop.controllers;
 
-
 import com.example.shop.models.Role;
 import com.example.shop.repositories.RoleRepository;
-import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/roles")
@@ -30,8 +32,17 @@ public class RolesController {
     }
 
     @PostMapping
-    public Role createRole(@RequestBody Role role){
-        return repo.save(role);
+    public ResponseEntity<?> createRole(@RequestBody @Valid  Role role){
+        Role existRole = repo.findByName(role.getName()).orElse(null);
+        if (existRole != null) {
+            Map<String, String> error = new HashMap<>();
+            error.put("name", "El rol '" + existRole.getName() + "' ya existe");
+            return ResponseEntity.badRequest().body(error);
+        }
+
+        Role savedRole = repo.save(role);
+        return ResponseEntity.ok("Rol '" + savedRole.getName() + "' creado exitosamente");
+
     }
 
     @PutMapping("/{id}")

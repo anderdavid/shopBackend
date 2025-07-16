@@ -1,6 +1,7 @@
 package com.example.shop.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -33,12 +34,8 @@ public class Role {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToMany
-    @JoinTable(
-            name="role_user",
-            joinColumns = @JoinColumn(name="role_id"),
-            inverseJoinColumns = @JoinColumn(name="user_id")
-    )
+    @ManyToMany(mappedBy = "roles")
+    @JsonIgnore
     private Set<User> users;
 
     public String getName() {
@@ -87,5 +84,17 @@ public class Role {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", users=" + users +
+                '}';
     }
 }

@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.Console;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+
+import static java.lang.System.in;
 
 @RestController
 @RequestMapping("/users")
@@ -47,13 +46,19 @@ public class UserController {
             response.put(MESSAGE,"El correo "+mUser.getEmail()+" ya existe");
             return ResponseEntity.badRequest().body(response);
         }
-        Role mRole = roleRepository.findByName(mUser.getRole()).orElse(null);
-        if(mRole == null){
-            response.put(MESSAGE,"El rol "+mUser.getRole()+" no existe");
-            return ResponseEntity.badRequest().body(response);
-        }
-        System.out.println("role"+mRole.toString());
 
+        List<String> roleNames = mUser.getRoles();
+        System.out.println("rolesNames "+roleNames);
+        List<Role> mRoles = new ArrayList<>();
+        for(String roleName : roleNames){
+            Role mRole = roleRepository.findByName(roleName).orElse(null);
+
+            if(mRole ==null){
+                response.put(MESSAGE,"El rol "+roleName+" no existe");
+                return ResponseEntity.badRequest().body(response);
+            }
+            mRoles.add(mRole);
+        }
 
         User newUser= new User();
         newUser.setFirstName(mUser.getFirstName());
@@ -62,13 +67,16 @@ public class UserController {
         newUser.setEmail(mUser.getEmail());
         newUser.setPassword(mUser.getPassword());
 
-        newUser.getRoles().add(mRole);
+        mRoles.forEach(role->{
+            newUser.getRoles().add(role);
+        });
 
         repo.save(newUser);
 
         response.put(MESSAGE,"usuario creado");
         response.put(USER,newUser);
         return ResponseEntity.ok(response);
+        //return ResponseEntity.ok("validando...");
 
     }
 

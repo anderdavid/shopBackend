@@ -2,6 +2,8 @@ package com.example.shop.payloads;
 
 import jakarta.validation.constraints.*;
 
+import java.util.List;
+
 public class UserDto {
 
     @NotNull(message = "El campo firstName es obligatorio")
@@ -23,8 +25,10 @@ public class UserDto {
     @Size(min = 8, message = "El campo password debe tener al menos 8 caracteres")
     private String password;
 
-    @NotNull(message = "El campo role es obligatorio")
-    private String role;
+    @NotNull(message = "La lista de roles no puede ser nula")
+    @Size(min = 1, message = "Debe haber al menos un rol")
+    private List<@NotBlank(message = "El nombre del rol no puede estar vacío") String> roles;
+
 
     public String getFirstName() {
         return firstName;
@@ -66,11 +70,11 @@ public class UserDto {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }

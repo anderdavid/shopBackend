@@ -126,11 +126,14 @@ public class UserController {
             existUser.setLastName(mUser.getLastName());
             existUser.setAge(mUser.getAge());
             existUser.setEmail(mUser.getEmail());
-            existUser.setPassword(mUser.getPassword());
+            if(mUser.getPassword()!=null){
+                existUser.setPassword(mUser.getPassword());
+            }
             existUser.setUpdatedAt(LocalDateTime.now());
             mRoles.forEach(role->{
                 existUser.getRoles().add(role);
             });
+            repo.save(existUser);
             response.put(MESSAGE,"usuario actualizado");
             response.put(USER,existUser);
         return ResponseEntity.ok(response);

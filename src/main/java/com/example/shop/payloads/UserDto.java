@@ -21,8 +21,6 @@ public class UserDto {
     @Email(message = "Direccion email no valida")
     private String email;
 
-    @NotNull(message = "El campo password es obligatorio")
-    @Size(min = 8, message = "El campo password debe tener al menos 8 caracteres")
     private String password;
 
     @NotNull(message = "La lista de roles no puede ser nula")

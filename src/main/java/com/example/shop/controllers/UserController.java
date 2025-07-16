@@ -5,6 +5,7 @@ import com.example.shop.repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,9 +18,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<String> findAllUsers() {
-        // return repo.findAll();
-        return ResponseEntity.ok("prueba de ci 7");
+    public List<User> findAllUsers() {
+        return repo.findAll();
     }
 
     @GetMapping("/{id}")
@@ -36,8 +36,11 @@ public class UserController {
     public User updateUsuario(@PathVariable Long id, @RequestBody User user) {
         User existUser = repo.findById(id).orElse(null);
         if (existUser != null) {
-            existUser.setNombre(user.getNombre());
-            existUser.setEdad(user.getEdad());
+            existUser.setFirstName(user.getFirstName());
+            existUser.setLastName(user.getLastName());
+            existUser.setEmail(user.getEmail());
+            existUser.setAge(user.getAge());
+            existUser.setUpdatedAt(LocalDateTime.now());
             repo.save(existUser);
         }
         return null;

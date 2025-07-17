@@ -5,6 +5,7 @@ import com.example.shop.models.User;
 import com.example.shop.payloads.UserDto;
 import com.example.shop.repositories.RoleRepository;
 import com.example.shop.repositories.UserRepository;
+import com.example.shop.utils.Encrypt;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ public class UserController {
     private final RoleRepository roleRepository;
     private final String MESSAGE ="message";
     private final String USER = "user";
+    private final Encrypt encrypt = new Encrypt();
 
     public UserController(UserRepository repo,RoleRepository roleRepository) {
         this.repo = repo;
@@ -80,7 +82,7 @@ public class UserController {
         newUser.setLastName(mUser.getLastName());
         newUser.setAge(mUser.getAge());
         newUser.setEmail(mUser.getEmail());
-        newUser.setPassword(mUser.getPassword());
+        newUser.setPassword(encrypt.cryptPassword(mUser.getPassword()));
 
         mRoles.forEach(role->{
             newUser.getRoles().add(role);
@@ -127,7 +129,7 @@ public class UserController {
             existUser.setAge(mUser.getAge());
             existUser.setEmail(mUser.getEmail());
             if(mUser.getPassword()!=null){
-                existUser.setPassword(mUser.getPassword());
+                existUser.setPassword(encrypt.cryptPassword(mUser.getPassword()));
             }
             existUser.setUpdatedAt(LocalDateTime.now());
             mRoles.forEach(role->{

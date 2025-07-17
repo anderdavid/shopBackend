@@ -8,4 +8,9 @@ public class Encrypt {
          BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
          return encoder.encode(password);
     }
+
+    public boolean comparePassword(String password,String encryptPassword){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(password,encryptPassword);
+    }
 }

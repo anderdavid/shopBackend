@@ -62,7 +62,7 @@ public class JwtHelper {
         String token = Jwts.builder()
                 .signWith(SignatureAlgorithm.HS512, key)
                 .setClaims(aditionalInfo)
-                .setIssuer("")
+                .setIssuer("echisan")
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME*1000))
@@ -74,6 +74,7 @@ public class JwtHelper {
     }*/
 
     public String generateToken(String username,User user) throws Exception {
+
         SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
 
         HashMap<String,Object> aditionalInfo = new HashMap<>();
@@ -89,12 +90,13 @@ public class JwtHelper {
                 }
         );
 
-        aditionalInfo.put("roles",roles);
+        //aditionalInfo.put("roles",roles);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject("username")
                 .issuer("shop")
                 .expirationTime(new Date(System.currentTimeMillis() + EXPIRATION_TIME*1000))
+                .claim("roles",roles)
                 .claim("aditional info",aditionalInfo)
                 .build();
 

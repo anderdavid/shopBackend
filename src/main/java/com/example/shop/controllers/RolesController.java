@@ -4,6 +4,7 @@ import com.example.shop.models.Role;
 import com.example.shop.repositories.RoleRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,9 @@ public class RolesController {
         this.repo = repo;
     }
 
+
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public  ResponseEntity<?> findAllRoles(){
 
         List<Role> roles =repo.findAll();

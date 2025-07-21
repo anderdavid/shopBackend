@@ -27,7 +27,7 @@ public class RolesController {
 
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public  ResponseEntity<?> findAllRoles(){
 
         List<Role> roles =repo.findAll();
@@ -41,6 +41,7 @@ public class RolesController {
 
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getRole(@PathVariable Long id){
         Role role =repo.findById(id).orElse(null);
@@ -56,6 +57,7 @@ public class RolesController {
 
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<?> createRole(@RequestBody @Valid  Role role){
         Map<String,Object> response = new HashMap<>();
@@ -72,6 +74,7 @@ public class RolesController {
 
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateRole(@PathVariable Long id, @RequestBody Role role){
         Map<String,Object> response = new HashMap<>();
@@ -90,6 +93,7 @@ public class RolesController {
         return ResponseEntity.badRequest().body(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRole(@PathVariable Long id){
         Map<String,Object> response = new HashMap<>();

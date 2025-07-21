@@ -8,6 +8,7 @@ import com.example.shop.repositories.UserRepository;
 import com.example.shop.utils.Encrypt;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Console;
@@ -30,6 +31,7 @@ public class UserController {
         this.roleRepository = roleRepository;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @GetMapping
     public ResponseEntity<?> findAllUsers() {
 
@@ -42,6 +44,7 @@ public class UserController {
         return  ResponseEntity.ok(users);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id) {
 
@@ -55,6 +58,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody @Valid UserDto mUser) {
         Map<String, Object> response = new HashMap<>();
@@ -96,6 +100,7 @@ public class UserController {
 
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUsuario(@PathVariable Long id, @RequestBody @Valid UserDto mUser) {
         User existUser = repo.findById(id).orElse(null);
@@ -141,6 +146,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?>  deleteUser(@PathVariable Long id) {
         Map<String,Object> response = new HashMap<>();

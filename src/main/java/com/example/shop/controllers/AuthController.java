@@ -4,6 +4,7 @@ import com.example.shop.models.Role;
 import com.example.shop.models.User;
 import com.example.shop.payloads.AuthDto;
 import com.example.shop.payloads.ForgotPasswordDto;
+import com.example.shop.payloads.RecoverPasswordDto;
 import com.example.shop.payloads.RegisterUserDto;
 import com.example.shop.repositories.RoleRepository;
 import com.example.shop.repositories.UserRepository;
@@ -105,5 +106,27 @@ public class AuthController {
         String url ="https://miUrl?token="+token;
         response.put(URL,url);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/recoveryPassword")
+    public ResponseEntity<?> recoveryPassword(@RequestBody @Valid RecoverPasswordDto data) throws Exception{
+        HashMap<String,Object> response = new HashMap<>();
+
+        if(!jwtHelper.verifyToken(data.getToken())){
+            response.put(MESSAGE, jwtHelper.getErrorVerifyToken());
+            return ResponseEntity.badRequest().body(response);
+        }
+        String email = jwtHelper.getEmailUser();
+        User user = repo.findByEmail(email).orElse(null);
+        if(user == null){
+            response.put(MESSAGE,"error usuario no encontrado");
+            return ResponseEntity.badRequest().body(response);
+        }
+        user.setPassword(encrypt.cryptPassword(data.getNewPassword()));
+        repo.save(user);
+
+        response.put(USER,user);
+
+        return ResponseEntity.ok(user);
     }
 }

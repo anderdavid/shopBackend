@@ -9,10 +9,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.stereotype.Component;
-
-
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +21,8 @@ import java.util.List;
 @Component
 public class JwtHelper {
 
-    private static final long EXPIRATION_TIME = 3600;
+    public static final long EXPIRATION_TIME = 3600;
+    public static final long EXPIRATION_TIME_EMAIL_RECOVERY = 300;
     private final String INFO ="info";
     private static String secret;
 
@@ -33,7 +31,7 @@ public class JwtHelper {
         System.out.println("JwtHelper()");
     }
 
-    public String generateToken(String username,User user) throws Exception {
+    public String generateToken(String username,User user,long expirationTime) throws Exception {
 
         SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
 
@@ -53,7 +51,7 @@ public class JwtHelper {
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject("username")
                 .issuer("shop")
-                .expirationTime(new Date(System.currentTimeMillis() + EXPIRATION_TIME*1000))
+                .expirationTime(new Date(System.currentTimeMillis() + expirationTime*1000))
                 .claim("roles",roles)
                 .claim("aditional info",aditionalInfo)
                 .build();

@@ -3,6 +3,7 @@ package com.example.shop.controllers;
 import com.example.shop.models.Role;
 import com.example.shop.models.User;
 import com.example.shop.payloads.AuthDto;
+import com.example.shop.payloads.ForgotPasswordDto;
 import com.example.shop.payloads.RegisterUserDto;
 import com.example.shop.repositories.RoleRepository;
 import com.example.shop.repositories.UserRepository;
@@ -25,6 +26,7 @@ public class AuthController {
     private final RoleRepository roleRepository;
     private final String MESSAGE ="message";
     private final String USER = "user";
+    private final String URL = "url";
     private final String ROLE_USER ="ROLE_USER";
     private final String ACCESS_TOKEN ="access_token";
     private final Encrypt encrypt = new Encrypt();
@@ -55,7 +57,7 @@ public class AuthController {
             response.put(MESSAGE,"La contraseña es incorrecta");
             return ResponseEntity.badRequest().body(response);
         }
-        String token = jwtHelper.generateToken(mUser.getEmail(),mUser);
+        String token = jwtHelper.generateToken(mUser.getEmail(),mUser,jwtHelper.EXPIRATION_TIME);
         response.put(ACCESS_TOKEN,token);
 
         return ResponseEntity.ok(response);
@@ -88,6 +90,20 @@ public class AuthController {
         repo.save(newUser);
         response.put(MESSAGE,"usuario registrado");
         response.put(USER,newUser);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<?> forgotPassword(@RequestBody @Valid ForgotPasswordDto data) throws Exception{
+        HashMap<String,Object> response = new HashMap<>();
+        User user = repo.findByEmail(data.getEmail()).orElse(null);
+        if(user == null){
+            response.put(MESSAGE,"No existe usuario con email "+data.getEmail()+"");
+            return ResponseEntity.badRequest().body(response);
+        }
+        String token = jwtHelper.generateToken(user.getEmail(),user,jwtHelper.EXPIRATION_TIME_EMAIL_RECOVERY);
+        String url ="https://miUrl?token="+token;
+        response.put(URL,url);
         return ResponseEntity.ok(response);
     }
 }

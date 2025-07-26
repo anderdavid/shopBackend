@@ -111,6 +111,18 @@ public class JwtHelper {
 
 
     }
+    public String getEmailByToken(String token){
+        try{
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+            Map<String, Object> additionalInfo = (Map<String, Object>) claims.getClaim(ADITIONAL_INFO);
+            String email = additionalInfo.get("email").toString();
+            System.out.println("email: "+email);
+            return email;
+        }catch (Exception e){
+            return null;
+        }
+    }
 
 
 

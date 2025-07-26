@@ -6,29 +6,48 @@ import com.example.shop.payloads.UserDto;
 import com.example.shop.repositories.RoleRepository;
 import com.example.shop.repositories.UserRepository;
 import com.example.shop.utils.Encrypt;
+import com.example.shop.utils.JwtHelper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Console;
 import java.time.LocalDateTime;
-import java.util.*;
-
-import static java.lang.System.in;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final UserRepository repo;
     private final RoleRepository roleRepository;
+    private JwtHelper jwtHelper;
+
     private final String MESSAGE ="message";
     private final String USER = "user";
     private final Encrypt encrypt = new Encrypt();
 
-    public UserController(UserRepository repo,RoleRepository roleRepository) {
+    public UserController(UserRepository repo,RoleRepository roleRepository,JwtHelper jwtHelper) {
         this.repo = repo;
         this.roleRepository = roleRepository;
+        this.jwtHelper = jwtHelper;
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me(@RequestHeader("Authorization") String header){
+        Map<String,Object> response = new HashMap<>();
+        String token = header.replace("Bearer ","");
+        String email = jwtHelper.getEmailByToken(token);
+        User me  = repo.findByEmail(email).orElse(null);
+        if(me == null){
+            response.put(MESSAGE,"Error obteniendo usuario");
+            ResponseEntity.badRequest().body(response);
+        }
+        response.put(USER,me);
+        return ResponseEntity.ok(response);
+
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
